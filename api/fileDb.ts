@@ -21,7 +21,9 @@ const fileDb = {
 
   async addItem(item: MessageWithoutId) {
     const message: Message = {
-      ...item,
+      author: item.author.trim() ? item.author : 'Anonymous',
+      message: item.message,
+      image: item.image,
       id: crypto.randomUUID(),
       datetime: new Date().toISOString()
     };
