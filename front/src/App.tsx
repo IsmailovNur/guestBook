@@ -9,11 +9,16 @@ import {
 } from "./entities/Message/messagesThunks.ts";
 import { ChatForm } from "./components/ChatForm.tsx";
 import type { IMessageMutation } from "./entities/Message/types.ts";
+import Spinner from "./shared/Spinner/Spinner.tsx";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const {messages, createLoading} = useSelector((state: RootState) => state.messages);
+  const {
+    messages,
+    createLoading,
+    fetchLoading
+  } = useSelector((state: RootState) => state.messages);
 
   useEffect(() => {
     dispatch(fetchMessages());
@@ -33,7 +38,12 @@ const App = () => {
           </Typography>
         </Box>
         <ChatForm onSubmit={handleFormSubmit} isLoading={createLoading} />
-        <MessageList messages={messages} />
+
+        {
+          fetchLoading
+            ? <Spinner isLoading={fetchLoading} />
+            : <MessageList messages={messages} />
+        }
 
       </Container>
     </Box>

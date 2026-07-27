@@ -12,8 +12,6 @@ export const MessageItem: React.FC<MessageItemProps> = ({message}) => {
     ? `${API_URL}/public/images/${message.image}`
     : null;
 
-  console.log(imageUrl);
-
   return (
     <Card sx={{marginBottom: 2, borderRadius: 2}} variant="outlined">
       <CardContent>

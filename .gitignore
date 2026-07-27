@@ -15,6 +15,7 @@ dist-ssr
 api/node_modules
 .idea
 DS_Store
+api/db.json
 
 # Editor directories and files
 .vscode/*
