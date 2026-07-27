@@ -3,6 +3,8 @@ import App from "./App.tsx";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
+import { Provider } from "react-redux";
+import { store } from "./app/store.ts";
 
 const darkTheme = createTheme({
   palette: {
@@ -12,7 +14,9 @@ const darkTheme = createTheme({
 
 createRoot(document.getElementById("root")!).render(
   <ThemeProvider theme={darkTheme}>
-    <CssBaseline />
-    <App />
+    <Provider store={store}>
+      <CssBaseline />
+      <App />
+    </Provider>
   </ThemeProvider>
 );

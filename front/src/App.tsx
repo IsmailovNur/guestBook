@@ -1,23 +1,18 @@
 import { Box, Container, Typography } from '@mui/material';
 import MessageList from "./components/MessageList.tsx";
-import type { IMessage } from "./entities/Message/types.ts";
-import { BASE_URL } from "./shared/axios/AxiosApi.ts";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import type { AppDispatch, RootState } from "./app/store.ts";
+import { fetchMessages } from "./entities/Message/messagesThunks.ts";
 
 const App = () => {
+  const dispatch = useDispatch<AppDispatch>();
 
-  const [messages, setMessages] = useState<IMessage[]>([]);
-
-  const fetchMessages = async () => {
-
-    const response = await BASE_URL.get<IMessage[]>('/messages');
-
-    setMessages(response.data);
-  };
+  const {messages} = useSelector((state: RootState) => state.messages);
 
   useEffect(() => {
-    void fetchMessages();
-  }, []);
+    dispatch(fetchMessages());
+  }, [dispatch]);
 
   return (
     <Box>
