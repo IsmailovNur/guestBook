@@ -1,67 +1,71 @@
-import React, { type FC, memo, useState } from 'react';
-import { Card, CardContent, TextField, Button, Box } from '@mui/material';
+import React, { type ChangeEvent, useState } from 'react';
+import { Box, Button, Card, CardContent, TextField } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import type { IMessageMutation } from '../entities/Message/types';
 
 interface ChatFormProps {
-  onSendMessage: (author: string, message: string) => Promise<void>;
+  onSubmit: (data: IMessageMutation) => void;
+  isLoading: boolean;
 }
 
-const ChatForm: FC<ChatFormProps> = memo(({onSendMessage}) => {
+export const ChatForm: React.FC<ChatFormProps> = ({onSubmit, isLoading}) => {
   const [author, setAuthor] = useState('');
   const [message, setMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [image, setImage] = useState<File | null>(null);
 
-  const submitHandler = async (e: React.SubmitEvent<HTMLFormElement>) => {
+  const fileChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) setImage(e.target.files[0]);
+  };
+
+  const submitHandler = (e: React.SubmitEvent) => {
     e.preventDefault();
+    if (!message.trim()) return;
 
-    if (!author.trim() || !message.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      await onSendMessage(author.trim(), message.trim());
-      setMessage('');
-      setAuthor('');
-    } catch (error) {
-      console.error('Error sending message:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    onSubmit({author, message, image});
+    setAuthor('');
+    setMessage('');
+    setImage(null);
   };
 
   return (
-    <Card sx={{ marginBottom: 2.5, borderRadius: 3 }} variant="outlined">
+    <Card sx={{marginBottom: 3, borderRadius: 3}} variant="outlined">
       <CardContent>
         <Box
           component="form"
           onSubmit={submitHandler}
-          sx={{ display: 'flex', flexDirection: 'column', gap: 1.5 }}
-        >
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2
+          }}>
           <TextField
-            size="small"
-            label="Username"
-            variant="outlined"
+            label="Author (optional)"
             value={author}
             onChange={(e) => setAuthor(e.target.value)}
-            disabled={isSubmitting}
-            fullWidth
+            disabled={isLoading}
           />
-          <Box sx={{ display: 'flex', gap: 1.2 }}>
-            <TextField
-              size="small"
-              label="message..."
-              variant="outlined"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              disabled={isSubmitting}
-              fullWidth
-            />
-            <Button
-              type="submit"
-              variant="contained"
-              disabled={isSubmitting || !author.trim() || !message.trim()}
-              endIcon={<SendIcon />}
-              sx={{ minWidth: 100 }}
-            >
+          <TextField
+            label="Message"
+            required
+            multiline
+            rows={2}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            disabled={isLoading}
+          />
+          <Box sx={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center'
+          }}>
+            <Button component="label" variant="outlined" startIcon={
+              <CloudUploadIcon />}>
+              {image ? image.name : 'Load Image'}
+              <input type="file" hidden onChange={fileChangeHandler} />
+            </Button>
+            <Button type="submit" variant="contained" disabled={isLoading || !message.trim()} endIcon={
+              <SendIcon />}>
               Send
             </Button>
           </Box>
@@ -69,6 +73,4 @@ const ChatForm: FC<ChatFormProps> = memo(({onSendMessage}) => {
       </CardContent>
     </Card>
   );
-});
-
-export default ChatForm;
+};

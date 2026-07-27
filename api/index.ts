@@ -2,16 +2,16 @@ import express from "express";
 import fileDb from "./fileDb";
 import messagesRouter from "./routers/messages";
 import cors from 'cors';
+import config from "./config";
 
 const app = express();
 const port = 8000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("public"));
-
 app.use('/messages', messagesRouter);
 
+app.use('/public', express.static(config.publicPath));
 
 const run = async () => {
   await fileDb.init();

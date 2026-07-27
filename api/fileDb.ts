@@ -1,11 +1,12 @@
 import { promises as fs } from 'fs';
 import { Message, MessageWithoutId } from "./types";
+import path from "path";
 
-const fileName = './db.json';
+const fileName = path.join(__dirname, 'db.json');
+
 let data: Message[] = [];
 
 const fileDb = {
-
   async init() {
     try {
       const fileContents = await fs.readFile(fileName);

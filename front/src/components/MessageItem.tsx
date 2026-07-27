@@ -1,12 +1,18 @@
 import React from 'react';
-import { Box, Card, CardContent, Typography } from '@mui/material';
+import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import type { IMessage } from '../entities/Message/types';
+import { API_URL } from "../shared/axios/AxiosApi.ts";
 
-interface Props {
+interface MessageItemProps {
   message: IMessage;
 }
 
-export const MessageItem: React.FC<Props> = ({message}) => {
+export const MessageItem: React.FC<MessageItemProps> = ({message}) => {
+  const imageUrl = message.image
+    ? `${API_URL}/public/images/${message.image}`
+    : null;
+
+  console.log(imageUrl);
 
   return (
     <Card sx={{marginBottom: 2, borderRadius: 2}} variant="outlined">
@@ -21,12 +27,25 @@ export const MessageItem: React.FC<Props> = ({message}) => {
           {message.message}
         </Typography>
 
-        <Box sx={{
-          Width: 300,
-          Height: 300,
-          borderRadius: 1
-        }}>
-        </Box>
+        {imageUrl && (
+          <Box sx={{
+            borderRadius: 1,
+            display: 'flex',
+            justifyContent: 'center',
+          }}>
+            <CardMedia
+              component="img"
+              image={imageUrl}
+              alt="Uploaded image"
+              sx={{
+                width: '200px',
+                height: '200px',
+                objectFit: 'cover',
+                borderRadius: 2
+              }}
+            />
+          </Box>
+        )}
       </CardContent>
     </Card>
   );

@@ -3,16 +3,26 @@ import MessageList from "./components/MessageList.tsx";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "./app/store.ts";
-import { fetchMessages } from "./entities/Message/messagesThunks.ts";
+import {
+  createMessage,
+  fetchMessages
+} from "./entities/Message/messagesThunks.ts";
+import { ChatForm } from "./components/ChatForm.tsx";
+import type { IMessageMutation } from "./entities/Message/types.ts";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const {messages} = useSelector((state: RootState) => state.messages);
+  const {messages, createLoading} = useSelector((state: RootState) => state.messages);
 
   useEffect(() => {
     dispatch(fetchMessages());
   }, [dispatch]);
+
+  const handleFormSubmit = async (data: IMessageMutation) => {
+    await dispatch(createMessage(data));
+    dispatch(fetchMessages());
+  };
 
   return (
     <Box>
@@ -21,11 +31,8 @@ const App = () => {
           <Typography variant="h3" sx={{m: 3}}>
             React-Guestbook
           </Typography>
-          <Typography>
-            MUI & Axios & Express
-          </Typography>
         </Box>
-
+        <ChatForm onSubmit={handleFormSubmit} isLoading={createLoading} />
         <MessageList messages={messages} />
 
       </Container>
